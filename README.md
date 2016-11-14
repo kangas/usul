@@ -1,4 +1,4 @@
-**Usul** is a client for the SEC EDGAR data system.
+**Usul** is a client for accessing SEC EDGAR data.
 
 ### Features
 
