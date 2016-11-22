@@ -2,10 +2,11 @@ Technical Design of Usul
 
 Usul provides an ES6 Promise-based API for retrieving public remote datasets, plus a local document cache.
 
-Initially we focus on access to the SEC EDGAR datasets, which is publicly accessible via FTP.
+The initial public dataset which we focus on is SEC EDGAR. As of December 2016, the canonical guide on accessing EDGAR is https://www.sec.gov/edgar/searchedgar/accessing-edgar-data.htm
 
-We create a top level module for each remote source. Let's call these "source modules". The initial source module is:
+For each remote source, such as EDGAR, we will create a "source module." The initial source module is:
 
 `usul.edgar`
 
-Within each source module, we shall create methods which correspond to named documents available on the remote system. We shall aim for a direct mapping of document names.
+Each source module shall contain methods which correspond directly to named documents available on the remote system. 
+
