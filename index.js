@@ -2,12 +2,13 @@
 
 module.exports = Usul
 
-var debug = require('debug')('usul')
-var EventEmitter = require('events').EventEmitter
-var inherits = require('inherits')
-var parallel = require('run-parallel')
+const debug = require('debug')('usul')
+const EventEmitter = require('events').EventEmitter
+const inherits = require('inherits')
+const parallel = require('run-parallel')
 
-var edgar = require('./lib/edgar')
+const mixin = require('./lib/mixin')
+const edgarMixin = require('./lib/mixins/edgar')
 
 /**
  * Usul version.
@@ -21,7 +22,7 @@ inherits(Usul, EventEmitter)
  * @param {Object=} opts
  */
 function Usul (opts) {
-  var self = this
+  let self = this
   if (!(self instanceof Usul)) {
     return new Usul(opts)
   }
@@ -46,7 +47,7 @@ function Usul (opts) {
    * Extend Usul with methods from source modules
    */
   self.optsEdgar = opts.edgar
-  self.edgar = edgar.fromPrototype(self)
+  self.edgar = mixin(edgarMixin, self)
 }
 
 /**
@@ -59,11 +60,11 @@ Usul.prototype.destroy = function (cb) {
 }
 
 Usul.prototype._destroy = function (err, cb) {
-  var self = this
+  let self = this
   debug('client destroy')
   self.destroyed = true
 
-  var tasks = self.requests.map(function (request) {
+  let tasks = self.requests.map(function (request) {
     return function (cb) {
       request.destroy(cb)
     }
