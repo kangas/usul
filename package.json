@@ -14,7 +14,8 @@
     "url": "git://github.com/kangas/usul.git"
   },
   "dependencies": {
-    "debug": "^2.3.2"
+    "debug": "^2.3.2",
+    "run-parallel": "^1.1.6"
   },
   "devDependencies": {
     "cross-spawn": "^5.0.1",
