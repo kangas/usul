@@ -7,6 +7,8 @@ var EventEmitter = require('events').EventEmitter
 var inherits = require('inherits')
 var parallel = require('run-parallel')
 
+var edgar = require('./lib/edgar')
+
 /**
  * Usul version.
  */
@@ -39,6 +41,12 @@ function Usul (opts) {
   //   self.ready = true
   //   self.emit('ready')
   // }
+
+  /**
+   * Extend Usul with methods from source modules
+   */
+  self.optsEdgar = opts.edgar
+  self.edgar = edgar.fromPrototype(self)
 }
 
 /**
