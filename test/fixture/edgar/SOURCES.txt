@@ -1,1 +1,2 @@
 https://www.sec.gov/Archives/edgar/daily-index/index.json
+https://www.sec.gov/Archives/edgar/full-index/index.json
