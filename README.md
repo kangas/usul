@@ -1,3 +1,7 @@
+## Usul
+
+[![Build Status](https://travis-ci.org/kangas/usul.svg?branch=master)](https://travis-ci.org/kangas/usul)
+
 **Usul** is a human and programmatic interface for public data about corporations.
 
 > Stilgar nodded, tugging at his beard. “I see strength in you… like the strength beneath a pillar.” Again he paused, then: “You shall be known among us as Usul, the base of the pillar. This is your secret name, your troop name. We of Sietch Tabr may use it, but none other may so presume… Usul.”
