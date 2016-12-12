@@ -26,6 +26,9 @@
     "node": ">=6"
   },
   "scripts": {
+    "check": "standard",
+    "clean": "bash ./bin/build.sh clean",
+    "build-docs": "bash ./bin/build.sh",
     "test": "standard && node ./bin/test.js",
     "test-node": "tape test/*.js test/node/*.js"
   }

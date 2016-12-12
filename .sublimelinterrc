@@ -1,0 +1,10 @@
+{
+	"linters": {
+		"standard": {
+			"@disable": false
+		},
+		"semistandard": {
+			"@disable": true
+		}
+	}
+}

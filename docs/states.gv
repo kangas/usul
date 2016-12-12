@@ -1,0 +1,27 @@
+/*
+ * This is a GraphViz diagram
+ */
+
+digraph states {
+	label="\n\nItem Retrieval States"
+	fontsize=20;
+
+	node [shape=box]; start; error;
+	node [shape=diamond]; isCacheReady;
+	node [shape=ellipse]; cacheReady; initCache;
+
+	/*
+	 * Is the local object cache ready for use?
+	 */
+	start -> isCacheReady;
+	isCacheReady -> initCache [label="No"];
+	isCacheReady -> cacheReady [label="Yes"];
+	initCache -> cacheReady [label="Ok"];
+	initCache -> error [label="Error",style=dashed];
+
+	/*
+	 * Retrieve EDGAR primary index files
+	 */
+
+
+}
