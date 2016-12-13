@@ -8,10 +8,10 @@ set -ex
 rm -rf dist
 
 mkdir -p dist
-mkdir -p dist/doc
+mkdir -p docs/built
 
 for DOTPATH in docs/*.gv
 do
 	DOTFILE=$(basename $DOTPATH)
-	dot -odist/doc/${DOTFILE}.svg -Tsvg $DOTPATH
+	dot -odocs/built/${DOTFILE}.svg -Tsvg $DOTPATH
 done
