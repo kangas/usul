@@ -3,11 +3,11 @@
  */
 
 digraph states {
-	label="\n\nItem Retrieval States"
+	label="\n\nEDGAR Index Retrieval States"
 	fontsize=20;
 
 	node [shape=Mdiamond]; start;
-	node [shape=Msquare]; end; error;
+	node [shape=Msquare]; end; cacheError; fetchError;
 
 	node [shape=box]; cacheReady; indexLoaded;
 	node [shape=diamond]; isCacheReady;
@@ -23,7 +23,7 @@ digraph states {
 	isCacheReady -> cacheReady [label="Yes",weight=2];
 	isCacheReady -> initCache [label="No"];
 	initCache -> cacheReady [label="Ok"];
-	initCache -> error [label="Error",style=dashed,weight=0];
+	initCache -> cacheError [label="Error",style=dashed,weight=0];
 
 	subgraph cluster_recache {
 		label = "function:recache";
@@ -46,29 +46,31 @@ digraph states {
 	 * Retrieve EDGAR primary index files
 	 */
 	"recache:full-index/";
-	"foreach:indexYear" [shape=tripleoctagon];
+	"foreach:indexYear" [shape=tripleoctagon,label="foreach:indexYear\nlimit_years:7"];
 	"foreach:quarter" [shape=tripleoctagon];
 	"recache:full-index/YEAR" [shape=ellipse];
 
 	cacheReady -> "recache:full-index/"
-	"recache:full-index/" -> recache [weight=0.5,dir=both];
+	// "recache:full-index/" -> recache [dir=both,weight=0.5];
 	"recache:full-index/" -> "foreach:indexYear" [label=Ok,weight=10];
-	"recache:full-index/" -> retryOnce [label="Error",style=dashed,weight=0.5];
-	"foreach:indexYear" -> "recache:full-index/YEAR"
+	"recache:full-index/" -> retryOnce [label="Error",dir=both];
+	"foreach:indexYear" -> "recache:full-index/YEAR" [weight=2];
 
-	"recache:full-index/YEAR" -> recache [weight=0.5,dir=both];
+	"recache:full-index/YEAR";
+	// "recache:full-index/YEAR" -> recache [dir=both,weight=0.5];
 	"recache:full-index/YEAR" -> "foreach:quarter" [label=Ok,weight=10];
-	"recache:full-index/YEAR" -> retryOnce [label="Error",style=dashed,weight=0.5];
-	"foreach:quarter" -> "recache:full-index/YEAR/QUARTER";
+	"recache:full-index/YEAR" -> retryOnce [label="Error",dir=both];
+	"foreach:quarter" -> "recache:full-index/YEAR/QUARTER" [weight=10];
 
 	"recache:full-index/YEAR/QUARTER";
-	"recache:full-index/YEAR/QUARTER" -> recache [weight=0.5,dir=both];
+	// "recache:full-index/YEAR/QUARTER" -> recache [weight=0.5,dir=both];
 	"recache:full-index/YEAR/QUARTER" -> awaitRequests [weight=10];
-	"recache:full-index/YEAR/QUARTER" -> retryOnce [label="Error",style=dashed,weight=0.5];
-	awaitRequests -> indexLoaded [label=Ok];
-	awaitRequests -> error [label="Timeout",style=dashed,weight=0];
+	"recache:full-index/YEAR/QUARTER" -> retryOnce [label="Error",dir=both];
 
-	retryOnce -> error [label="Error",style=dashed,weight=0];
+	awaitRequests -> indexLoaded [label=Ok];
+	awaitRequests -> fetchError [label="Timeout",style=dashed,weight=0];
+
+	retryOnce -> fetchError [label="Error",style=dashed,weight=0];
 
 	indexLoaded -> end;
 }
