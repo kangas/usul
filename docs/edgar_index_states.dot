@@ -1,0 +1,110 @@
+/*
+ * This is a GraphViz diagram
+ *
+ * Inspiration: https://fsteeg.wordpress.com/2006/11/16/uml-activity-diagrams-with-graphviz/
+ */
+
+digraph states {
+	label="\n\nEDGAR Index Retrieval States"
+	fontsize=20;
+
+	edge [fontsize=11,arrowhead=open]
+
+	// ---------------
+  // Define nodes
+  // --------------
+
+	node [style=filled];
+	start [shape=circle,label=""];
+	end [shape=doublecircle,label=""];
+
+	node [style=filled,shape=rect];
+	cacheError;
+	fetchError;
+
+	node [style="",shape=diamond];
+	isCacheReady;
+
+	node [shape=box3d];
+	"foreach:indexYear";
+	"foreach:quarter";
+
+	node [shape=invhouse];
+	"awaitRequests"
+
+	node [shape=rect,style=rounded];
+	cacheReady;
+	indexLoaded;
+	initCache;
+
+	"recache:full-index/";
+	"foreach:indexYear" [label="foreach:indexYear\nlimit_years:7"];
+	"foreach:quarter";
+	"recache:full-index/YEAR";
+	"recache:full-index/YEAR";
+	"recache:full-index/YEAR/QUARTER";
+
+	// -------------------------
+  // Define Edges
+  // -------------------------
+
+  // Define the happy path first
+
+	start
+	-> isCacheReady
+	-> cacheReady
+	-> "recache:full-index/"
+	-> "foreach:indexYear"
+	-> "recache:full-index/YEAR"
+	-> "foreach:quarter"
+	-> "recache:full-index/YEAR/QUARTER"
+	-> awaitRequests
+	-> indexLoaded
+	-> end [weight=10];
+
+	// ------------------------
+  // Define branches
+  // ------------------------
+
+	edge [style=dashed];
+
+	isCacheReady -> initCache [label="No"];
+	initCache -> cacheReady [label="Ok",style=""];
+	initCache -> cacheError [label="Error",weight=0];
+
+	"recache:full-index/" -> retryOnce [label="Error",dir=both];
+
+	"recache:full-index/YEAR" -> retryOnce [label="Error",dir=both];
+
+	"recache:full-index/YEAR/QUARTER" -> retryOnce [label="Error",dir=both];
+
+	awaitRequests -> fetchError [label="Timeout",weight=0];
+
+	retryOnce -> fetchError [label="Error",weight=0];
+
+	edge [style=""];
+
+	// ------------------------------
+  // Define our function "recache"
+  // ------------------------------
+
+	subgraph cluster_recache {
+		label = "function:recache";
+		color=purple;
+		style="dashed";
+		rank=min;
+
+		recache [shape=circle,style=filled,label=""];
+		return [style=filled,shape=doublecircle,label=""];
+		isCached [shape=diamond];
+
+		recache
+		-> isCached
+		-> return [weight=10];
+
+		isCached -> queueFetch [label=No];
+		queueFetch -> fetch;
+		fetch -> return [label=Ok];
+		fetch -> fail [label=Error,style=dashed];
+	}
+}
